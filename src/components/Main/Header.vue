@@ -5,9 +5,8 @@
             <a class="log_twitch" href="">
                 <img src="">
                 <p>Welcome Log-in with Twitch</p> 
-                
             </a>
-            <a class="log-default" href="">Log-in with Homm</a>
+            <router-link class="log-default" to="auth">Log-in with Homm</router-link>
             <a href="" class="logout">X</a>
         </div>
     </header>
@@ -17,7 +16,7 @@
         name: 'Header'
     }
 </script>
-<style>
+<style scoped>
     header{
         width: 100%;
         height: 70px;

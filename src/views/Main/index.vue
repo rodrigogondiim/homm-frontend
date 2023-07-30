@@ -1,11 +1,16 @@
 <template>
-    <h1>Index</h1>
+    <Header/>
+    <router-view></router-view>
 </template>
 
 <script>
-
+    import Header from '@/components/Main/Header.vue';
+    export default {
+        components: {
+            Header
+        }
+    }
 </script>
 
 <style>
-
 </style>
