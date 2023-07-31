@@ -19,6 +19,7 @@
     }
     h1{
         padding: 1.2rem 1.5rem ;
+        font-size: 1.4em;
         background: #332E2E;
     }
 </style>
