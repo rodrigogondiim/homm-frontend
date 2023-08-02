@@ -3,21 +3,74 @@
         <h1>Autenticação</h1>
         <section id="content">
             <form action="">
-                <input type="text" placeholder="Digite o seu usuário" name="login">
-                <input type="password" placeholder="Digite sua senha" name="password">
-                <input type="submit" @click.prevent="sendAuth" value="Entrar">
+                <input type="email" placeholder="Digite o seu email" v-model="login">
+                <input type="password" placeholder="Digite sua senha" v-model="password">
+                <input type="submit" :disabled="isDisabled" @click.prevent="sendAuth" :value="txtValue">
             </form>
         </section>
     </main>
 </template>
 
 <script>
+    import axios from 'axios';
+    import { useToast, POSITION } from "vue-toastification";
 
     export default {
-        methods: {
-            sendAuth(){
-                console.log('aq')
+        setup(){
+            const toast = useToast();
+            
+            return { toast }
+
+        },
+        data(){
+            return {
+                login: '',
+                password: '',
+                isDisabled: false,
+                txtValue: 'Entrar'
             }
+        },
+        methods: {
+            validate(){
+                if(!this.login || !this.password){
+                    this.toast.clear();
+                    this.toast.info('Informe os dados para acesso!', {
+                        position: POSITION.BOTTOM_CENTER,
+                        icon: true
+                    });
+
+                    return false;
+                }
+                
+                return true;
+            },
+            async sendAuth(){
+                if(!this.validate()){
+                    return false;
+                }
+
+                this.isDisabled = true;
+                this.txtValue = 'Aguarde...';
+
+                this.toast.clear();
+                try{
+                    const { data } = await axios.post('http://127.0.0.1:8000/api/auth', {
+                        email: this.login,
+                        password: this.password
+                    });
+
+                    localStorage.setItem('-tknA', data.access_token);
+                    this.$router.push('/');
+                }catch( error ){
+                    this.toast.error('Email e/ou senha incorretos!', {
+                        position: POSITION.BOTTOM_CENTER,
+                        icon: true
+                    });
+                }
+
+                this.isDisabled = false;
+                this.txtValue = 'Entrar';
+            },
         }
     }
 
@@ -37,7 +90,7 @@ main{
     justify-content: center;
 }
 
-input[type=text], input[type=password]{
+input[type=email], input[type=password]{
     padding: .8rem;
     margin-bottom: .8rem;
 }
