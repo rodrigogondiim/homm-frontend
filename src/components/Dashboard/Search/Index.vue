@@ -1,38 +1,20 @@
 <template>
   <div class="parts-main">
     <div>
-      <input
-        autocomplete="off"
-        style="position: relative"
-        aria-label="Entrada Pesquisa"
-        :value="searchText"
-        @input="(e) => (searchText = e.target.value)"
-        @keyup="searchUser"
-        ref="search"
-        @blur="focusOff"
-        class="search"
-        type="text"
-      />
-      <span
-        v-if="spinner"
-        style="
+      <input autocomplete="off" style="position: relative" aria-label="Entrada Pesquisa" :value="searchText"
+        @input="(e) => (searchText = e.target.value)" @keyup="searchUser" ref="search" @blur="focusOff" class="search"
+        type="text" />
+      <span v-if="spinner" style="
           width: 20px;
           height: 20px;
           position: absolute;
           top: 7px;
           right: 3px;
-        "
-      >
+        ">
         <Spinner class="spinner" v-if="onSearch" />
       </span>
     </div>
-    <div
-      class="parts"
-      @focus="focusOn"
-      tabindex="0"
-      role="button"
-      v-if="!onSearch"
-    >
+    <div class="parts" @focus="focusOn" tabindex="0" role="button" v-if="!onSearch">
       <div class="itens">
         <img src="@/assets/img/search.svg" alt="" />
         <p>Pesquisar</p>
@@ -79,6 +61,7 @@ export default {
   width: 5px;
   height: 5px;
 }
+
 .search {
   height: 30px;
   padding: 0.3rem;
@@ -86,16 +69,19 @@ export default {
   color: #999;
   outline: none;
 }
+
 .parts-main {
   width: 200px;
   position: relative;
   display: flex;
   flex-direction: column;
 }
+
 .parts-main input {
   width: 100%;
   height: 100%;
 }
+
 .parts {
   top: 0;
   left: 0;
@@ -112,6 +98,7 @@ export default {
   color: #999;
   box-sizing: border-box;
 }
+
 .parts .itens {
   display: flex;
   flex-direction: row;
@@ -120,6 +107,7 @@ export default {
   -ms-user-select: none;
   user-select: none;
 }
+
 .parts .itens img {
   margin-right: 16px;
 }

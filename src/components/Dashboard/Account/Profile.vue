@@ -11,31 +11,7 @@
             <h3>Vocês são amigos!</h3>
           </template>
           <template v-else>
-            <template v-if="!profile.have_solicitation">
-              <button
-                v-if="profile.was_my_solicitation"
-                class="request_pendent"
-                title="Você enviou um pedido de amizade"
-              >
-                <i class="fa-solid fa-user-check"></i>
-              </button>
-              <button
-                v-else
-                class="request_ok"
-                title="Adicionar como amigo"
-                @click="requestFriend"
-              >
-                <i class="fa-solid fa-user-plus"></i>
-              </button>
-            </template>
-            <template v-else>
-              <button class="confirm">
-                <i class="fa-solid fa-circle-check"></i> Aceitar
-              </button>
-              <button class="close">
-                <i class="fa-solid fa-circle-xmark"></i> Recusar
-              </button>
-            </template>
+            <optionsRequest @requestFriend="requestFriend" :profile="profile" />
           </template>
         </div>
         <div class="birthday">
@@ -50,11 +26,13 @@
 </template>
 <script>
 import Spinner from "@/components/Animations/Spinner.vue";
+import optionsRequest from "@/components/Dashboard/Buttons/optionsRequest.vue";
 import http from "@/services/axios";
 
 export default {
   components: {
     Spinner,
+    optionsRequest,
   },
   data() {
     return {
@@ -76,7 +54,7 @@ export default {
         .then((response) => (this.profile = response.data))
         .catch((err) => {
           err.response.status === 401
-            ? this.$router.push({ name: "auth" })
+            ? this.$router.go({ name: "index" })
             : console.log(err);
         });
     },
@@ -86,7 +64,7 @@ export default {
         .then(() => (this.profile.was_my_solicitation = true))
         .catch((err) => {
           err.response.status === 401
-            ? this.$router.push({ name: "auth" })
+            ? this.$router.go({ name: "index" })
             : console.log(err);
         });
     },
@@ -106,9 +84,11 @@ export default {
 section {
   margin: auto;
 }
+
 .spinner {
   margin: 10px auto;
 }
+
 .profile {
   height: 150px;
   display: flex;
@@ -117,9 +97,11 @@ section {
   color: #f4f4f4;
   text-align: left;
 }
+
 .profile img {
   aspect-ratio: 1/1;
 }
+
 .profile .infos {
   display: flex;
   flex-direction: column;
@@ -135,60 +117,20 @@ section {
   letter-spacing: 1px;
 }
 
-.profile button {
-}
+.profile button {}
+
 .profile .btns {
   display: flex;
   gap: 10px;
 }
+
 .birthday {
   margin-top: 10px;
   font-size: 0.7em;
 }
+
 .timeline {
   margin-top: 30px;
   font-size: 0.8em;
-}
-.request_ok,
-.request_pendent {
-  margin-top: 10px;
-  border-radius: 50%;
-  appearance: none;
-  padding: 5px;
-  outline: none;
-  border: none;
-}
-.request_pendent {
-  background: #9146ff;
-  color: #f2f2f2;
-  cursor: auto;
-}
-.request_ok {
-  cursor: pointer;
-  color: #9146ff;
-  background: #f2f2f2;
-}
-
-.confirm,
-.close {
-  border-radius: 3px;
-  border: none;
-  outline: hidden;
-  background: transparent;
-  padding: 3px;
-  box-sizing: border-box;
-}
-
-.confirm {
-  color: green;
-  margin-right: 10px;
-}
-.close {
-  color: red;
-}
-.confirm:hover,
-.close:hover {
-  background: #fff;
-  cursor: pointer;
 }
 </style>

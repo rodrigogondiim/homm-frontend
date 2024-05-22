@@ -24,8 +24,8 @@ export default {
         })
         .then(() => state.commit("view", payload))
         .catch((error) => {
-          // if (error.response.status === 401) checkToken(true);
-          console.log(error);
+          if (error.response.status === 401)
+            checkToken(true);
         });
     },
 
@@ -35,8 +35,8 @@ export default {
         .get(`/api/friends/pendent`)
         .then((resolve) => state.commit("friendsPendency", resolve.data))
         .catch((error) => {
-          // if (error.response.status === 401) checkToken(true);
-          console.log(error);
+          if (error.response.status === 401)
+            checkToken(true);
         });
     },
     hasViewed(state, payload) {

@@ -2,7 +2,7 @@
   <header>
     <div class="logins">
       <router-link class="log-default" to="auth" v-if="isNotPageAuth">
-        Log-in with Homm
+        Fazer Login
       </router-link>
       <router-link class="log-default" to="/" v-else>
         <i class="fa-solid fa-chevron-left"></i>Voltar
@@ -29,16 +29,20 @@ header {
   justify-content: space-between;
   align-items: center;
 }
+
 .logins {
   display: flex;
 }
+
 .log-default {
   font-size: 0.8em;
   color: #fff;
   padding: 1rem;
   text-decoration: none;
   background: #9146ff;
+  border-radius: 3px;
 }
+
 .log-default i {
   font-weight: bold;
   margin-right: 7px;

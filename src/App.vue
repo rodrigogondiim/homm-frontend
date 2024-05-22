@@ -16,11 +16,16 @@ export default {
   padding: 0;
 }
 
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
 #app {
   font-family: "Ubuntu", Helvetica, Arial, sans-serif;
   text-align: center;
   color: #2c3e50;
 }
+
 html {
   -webkit-tap-highlight-color: transparent;
 }
