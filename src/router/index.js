@@ -6,7 +6,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      component: () => import("@/views/Main/index.vue"),
+      component: () => import("@/views/Main/Index.vue"),
       children: [
         {
           path: "",
@@ -15,13 +15,17 @@ const router = createRouter({
         },
         {
           path: "auth",
-          component: () => import("@/components/Authenticator.vue"),
+          name: "auth",
+          component: () => import("@/components/Login.vue"),
+        },
+        {
+          path: "register",
+          component: () => import("@/components/Register.vue"),
         },
       ],
     },
     {
       path: "/dashboard",
-
       component: () => import("@/views/Dashboard/Index.vue"),
       children: [
         {

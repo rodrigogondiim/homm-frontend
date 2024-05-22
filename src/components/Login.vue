@@ -1,20 +1,11 @@
 <template>
   <main>
-    <h1>Homm</h1>
+    <h1>Faça o login</h1>
     <section id="content">
       <form action="">
         <input type="email" placeholder="Digite o seu email" v-model="email" />
-        <input
-          type="password"
-          placeholder="Digite sua senha"
-          v-model="password"
-        />
-        <input
-          type="submit"
-          :disabled="isDisabled"
-          @click.prevent="sendAuth"
-          value="Entrar"
-        />
+        <input type="password" placeholder="Digite sua senha" v-model="password" />
+        <input type="submit" :disabled="isDisabled" @click.prevent="sendAuth" value="Entrar" />
       </form>
     </section>
   </main>
@@ -31,8 +22,8 @@ export default {
   },
   data() {
     return {
-      email: "",
-      password: "",
+      email: null,
+      password: null,
       isDisabled: false,
     };
   },
@@ -109,6 +100,7 @@ input[type="password"] {
 input[type="submit"] {
   width: 80px;
   height: 35px;
+  background: ;
 }
 
 form {
