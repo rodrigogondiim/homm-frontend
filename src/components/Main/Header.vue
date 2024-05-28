@@ -22,6 +22,7 @@ export default {
 </script>
 <style scoped>
 header {
+  max-width: 1000px;
   width: 90%;
   height: 70px;
   margin: auto;

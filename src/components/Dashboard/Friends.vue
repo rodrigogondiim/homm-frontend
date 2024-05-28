@@ -9,7 +9,6 @@
                     <p>Última vez online ...</p>
                 </div>
             </div>
-
         </div>
         <div id="chat">
             <p>Em desenvovimento...</p>
@@ -40,7 +39,9 @@ export default {
 h1 {
     margin: 0.9rem 0;
     text-align: left;
+    color: white;
 }
+
 
 #friends {
     display: flex;

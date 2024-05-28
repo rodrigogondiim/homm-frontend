@@ -1,8 +1,9 @@
 <template>
   <header>
     <Spinner v-if="!isLogged" />
-    <template v-if="isLogged">
-      <Notification :userMe="getUserLogged.id" :view="getUserLogged.view_notification" />
+    <template v-else>
+      <Notification v-if="onLoad" :userMe="getUserLogged.id" :view="getUserLogged.view_notification" />
+      <Spinner v-else />
 
       <div class="info">
         <nav id="manageOptions">
@@ -43,12 +44,19 @@ export default {
     const toast = useToast();
     return { toast };
   },
-  created() {
-    this.userLogged();
-
+  data() {
+    return {
+      onLoad: false,
+    }
+  },
+  async created() {
     window.Pusher = require("pusher-js");
     window.Echo = new Echo({
       broadcaster: "pusher",
+      //
+      wsHost: process.env.VUE_APP_PUSHER_APP_SERVER,
+      wsPort: parseInt(process.env.VUE_APP_PUSHER_APP_PORT),
+      //
       key: process.env.VUE_APP_PUSHER_APP_KEY,
       cluster: process.env.VUE_APP_PUSHER_APP_CLUSTER,
       forceTLS: false,
@@ -62,20 +70,24 @@ export default {
                 channel_name: channel.name,
               })
               .then((response) => {
-                console.log("...");
                 callback(null, response.data);
               })
               .catch((error) => {
-                console.log(error);
                 callback(error);
               });
           },
         };
       },
     });
+    this.userLogged();
+    await this.listFriendsPendency();
+    this.onLoad = true;
   },
   methods: {
     ...mapActions("user", ["userLogged"]),
+    ...mapActions("notification", [
+      "listFriendsPendency",
+    ]),
     optionsManager() {
       const manager = document.getElementById('manageOptions').classList;
       const hasActive = manager.contains("active");
@@ -108,6 +120,7 @@ export default {
 </script>
 <style scoped>
 header {
+  max-width: 900px;
   width: 90%;
   height: 70px;
   margin: auto;
@@ -131,6 +144,7 @@ header {
 }
 
 .main_manager {
+  color: #fff;
   position: absolute;
   top: 5px;
   left: 5px;

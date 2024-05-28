@@ -20,7 +20,7 @@ export default {
         .get(`/api/auth/me`)
         .then((resolve) => state.commit("setUser", resolve.data))
         .catch((error) => {
-          if (error?.response.status === 401) this.$router.go({ name: "auth" });
+          if (error?.response.status === 401) checkToken(true);
         });
     },
   },

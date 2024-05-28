@@ -9,6 +9,7 @@
         <div class="card_solicitation" v-for="pendent in getListFriendsPendency" :key="pendent.id">
           <img :src="pendent.user.picture" alt="" />
           <div class="infos">
+            <p class="when">{{ dateNotification(pendent.created_at) }}</p>
             <h4>
               <span title="Ir para perfil" @click="goToProfile(pendent.user.name)">{{ pendent.user.name }}</span>
               fez uma solicitação de amizade
@@ -20,7 +21,6 @@
               <button class="close">
                 <i class="fa-solid fa-circle-xmark"></i> Recusar
               </button>
-              <p>{{ dateNotification(pendent.created_at) }}</p>
             </div>
           </div>
         </div>
@@ -35,8 +35,13 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import moment from 'moment';
+import { useToast, POSITION } from "vue-toastification";
 
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   props: {
     userMe: Number,
     view: Boolean,
@@ -54,34 +59,29 @@ export default {
   },
   created() {
     this.hasViewed(this.view);
-
     document.body.addEventListener(
-      "click",
-      () => (this.onModalNotification = false)
+      "click", () => this.onModalNotification = false
     );
-    window.Echo.private(`request_friend.${this.userMe}`).listen(
-      ".RequestFriend",
-      async (resultEvent) => {
-        if (!this.onModalNotification) return this.viewed(true);
 
-        this.getListFriendsPendency.unshift(resultEvent.notification);
-        this.scrollTop();
-      }
-    );
+    window.Echo
+      .private(`request_friend.${this.userMe}`)
+      .listen(".RequestFriend", (notification) => this.handleNotification(notification))
+
+    window.Echo
+      .private(`response_friendship.${this.userMe}`)
+      .listen(".ResponseFriendship", (notification) => this.handleNotification(notification));
+
   },
   methods: {
     ...mapActions("notification", [
-      "viewed",
-      "listFriendsPendency",
+      "setAsPreview",
       "hasViewed",
     ]),
     async showNotification() {
-      if (!this.onModalNotification)
-        await this.listFriendsPendency();
       if (this.receivedNotification)
-        this.viewed(false);
+        this.setAsPreview(false);
 
-      this.onModalNotification = true;
+      this.onModalNotification = !this.onModalNotification;
     },
     goToProfile(profileToGo) {
       this.onModalNotification = false;
@@ -91,13 +91,35 @@ export default {
         replace: true,
       });
     },
-    scrollTop() {
-      if (this.getListFriendsPendency.length)
-        document.querySelectorAll(".box")[0].scrollIntoView(true);
-    },
     dateNotification(date) {
       moment.locale('pt-br');
       return moment(new Date(date)).fromNow();
+    },
+    handleNotification(notification) {
+      switch (true) {
+        case 'friendship' in notification:
+          this.setAsPreview(!this.onModalNotification);
+          this.getListFriendsPendency.unshift(notification.friendship);
+          break;
+        case 'statusFriendship' in notification: {
+          const { status, user } = notification.statusFriendship;
+          const configToast = {
+            position: POSITION.BOTTOM_CENTER,
+            icon: true,
+            timeout: 3000,
+          };
+
+          if (status == 'accepted') {
+            this.toast.success(`${user.name} aceitou o pedido de amizade!`, configToast);
+          } else {
+            this.toast.error(`${user.name} recusou o pedido de amizade!`, configToast);
+          }
+          break;
+        }
+      }
+
+      if (this.getListFriendsPendency.length)
+        document.querySelectorAll(".box")[0]?.scrollIntoView(true);
     }
   },
 };
@@ -124,6 +146,7 @@ img {
   background: #fff;
   z-index: 10;
   padding: 0.3rem;
+  border-radius: 5px;
   overflow-y: scroll;
   margin: auto;
   scrollbar-width: thin;
@@ -182,10 +205,12 @@ img {
   align-items: center;
 }
 
-.card_solicitation .infos .btns p {
-  font-size: 0.6em;
+.when {
+  font-size: 0.5em;
   font-weight: bold;
   text-wrap: nowrap;
+  margin-top: -8px;
+  text-align: right;
 }
 
 .confirm,

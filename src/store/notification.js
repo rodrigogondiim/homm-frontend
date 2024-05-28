@@ -16,7 +16,7 @@ export default {
     },
   },
   actions: {
-    async viewed(state, payload) {
+    async setAsPreview(state, payload) {
       checkToken(true);
       await http()
         .patch(`/api/user/notified`, {

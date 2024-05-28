@@ -7,12 +7,7 @@
         <h1>@{{ profile.name }}</h1>
         <p v-if="profile.slogan">{{ profile.slogan }}</p>
         <div class="btns">
-          <template v-if="profile.it_is_my_friend">
-            <h3>Vocês são amigos!</h3>
-          </template>
-          <template v-else>
-            <optionsRequest @requestFriend="requestFriend" :profile="profile" />
-          </template>
+          <Request :profile="profile" />
         </div>
         <div class="birthday">
           <span>🎉20/05/2000</span>
@@ -26,13 +21,13 @@
 </template>
 <script>
 import Spinner from "@/components/Animations/Spinner.vue";
-import optionsRequest from "@/components/Dashboard/Buttons/optionsRequest.vue";
+import Request from "@/components/Dashboard/Buttons/Request.vue";
 import http from "@/services/axios";
 
 export default {
   components: {
     Spinner,
-    optionsRequest,
+    Request,
   },
   data() {
     return {
@@ -55,19 +50,9 @@ export default {
         .catch((err) => {
           err.response.status === 401
             ? this.$router.go({ name: "index" })
-            : console.log(err);
+            : '';
         });
-    },
-    async requestFriend() {
-      await http()
-        .post(`/api/friends/${this.profile.id}`)
-        .then(() => (this.profile.was_my_solicitation = true))
-        .catch((err) => {
-          err.response.status === 401
-            ? this.$router.go({ name: "index" })
-            : console.log(err);
-        });
-    },
+    }
   },
   watch: {
     async "$route.params"(newProfile) {
@@ -75,7 +60,7 @@ export default {
         this.profile = [];
         await this.getProfile();
       }
-    },
+    }
   },
 };
 </script>
@@ -90,7 +75,9 @@ section {
 }
 
 .profile {
+  max-width: 900px;
   height: 150px;
+  margin: auto;
   display: flex;
   background: #2c3e50;
   gap: 10px;

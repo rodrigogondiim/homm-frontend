@@ -46,6 +46,9 @@ const router = createRouter({
   ],
 });
 
+router.beforeEach(() => {
+  document.title = `${process.env.VUE_APP_NAME}`
+});
 router.beforeResolve((to) => {
   if (to.meta.middlewareAuth) {
     if (!checkToken()) return { name: "index" };

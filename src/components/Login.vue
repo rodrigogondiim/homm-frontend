@@ -2,10 +2,10 @@
   <main>
     <h1>Faça o login</h1>
     <section id="content">
-      <form action="">
-        <input type="email" placeholder="Digite o seu email" v-model="email" />
-        <input type="password" placeholder="Digite sua senha" v-model="password" />
-        <input type="submit" :disabled="isDisabled" @click.prevent="sendAuth" value="Entrar" />
+      <form>
+        <input type="email" placeholder="Digite o seu email" v-model="formData.email" />
+        <input type="password" placeholder="Digite sua senha" v-model="formData.password" />
+        <Button :load="onLoad" :disabled="onLoad" @click.prevent="checkInfos">Entrar</Button>
       </form>
     </section>
   </main>
@@ -13,65 +13,77 @@
 
 <script>
 import http from "@/services/axios";
+import Button from "./Animations/Button.vue";
 import { useToast, POSITION } from "vue-toastification";
+import { useVuelidate } from "@vuelidate/core";
+import { required, email, minLength } from "@vuelidate/validators";
 
 export default {
+  components: {
+    Button,
+  },
   setup() {
     const toast = useToast();
-    return { toast };
+    return { toast, v$: useVuelidate() };
   },
   data() {
     return {
-      email: null,
-      password: null,
-      isDisabled: false,
+      formData: {
+        email: "",
+        password: "",
+      },
+      onLoad: false,
+    };
+  },
+  validations() {
+    return {
+      formData: {
+        email: {
+          required,
+          email,
+        },
+        password: {
+          required,
+          minLength: minLength(6),
+        },
+      },
     };
   },
   methods: {
-    validate() {
-      if (!this.email || !this.password) {
+    async checkInfos() {
+      const checkFields = await this.v$.$validate();
+      if (!checkFields) {
         this.toast.clear();
-        this.toast.info("Informe os dados para acesso!", {
+        this.toast.warning("Informe os dados para acesso!", {
           position: POSITION.BOTTOM_CENTER,
           icon: true,
         });
-
         return false;
       }
-
-      this.isDisabled = true;
-      this.toast.info("Aguarde...", {
-        position: POSITION.BOTTOM_CENTER,
-        icon: true,
-      });
-      this.toast.clear();
-
-      return true;
+      this.onLoad = true;
+      return await this.login();
     },
-    async sendAuth() {
-      if (!this.validate()) return false;
-
+    async login() {
       try {
         const { data } = await http().post(`/api/auth`, {
-          email: this.email,
-          password: this.password,
+          ...this.formData,
         });
-
         localStorage.setItem("-tknA", data.access_token);
-        this.toast.success("Login concedido com sucesso!", {
+        this.toast.success("Login feito com sucesso!", {
           position: POSITION.BOTTOM_CENTER,
           icon: true,
           timeout: 1700,
+          onClose: () => {
+            this.$router.push({ name: "dash" });
+          },
         });
-        this.$router.push({ name: "dash" });
       } catch (error) {
+        this.onLoad = false;
         this.toast.error("Email e/ou senha incorretos!", {
           position: POSITION.BOTTOM_CENTER,
           icon: true,
         });
       }
-
-      this.isDisabled = false;
     },
   },
 };
@@ -79,6 +91,7 @@ export default {
 
 <style scoped>
 main {
+  max-width: 900px;
   width: 90%;
   margin: 2rem auto;
   color: #f2f2f2;
@@ -95,12 +108,6 @@ input[type="email"],
 input[type="password"] {
   padding: 0.8rem;
   margin-bottom: 0.8rem;
-}
-
-input[type="submit"] {
-  width: 80px;
-  height: 35px;
-  background: ;
 }
 
 form {

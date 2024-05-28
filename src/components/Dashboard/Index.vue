@@ -8,7 +8,7 @@
             <img :src="user.picture" alt="" />
             <div class="profile-infos">
               <h3>@{{ user.name }}</h3>
-              <h6>o malvadao</h6>
+              <h6></h6>
             </div>
           </div>
         </div>
@@ -38,14 +38,10 @@ export default {
 
       if (!this.search_user) return false;
 
-      try {
-        const { data } = await http().get(`/api/user`, {
-          params: { search: this.search_user },
-        });
-        this.users = data;
-      } catch (err) {
-        console.log(err);
-      }
+      const { data } = await http().get(`/api/user`, {
+        params: { search: this.search_user },
+      });
+      this.users = data;
     },
     toUser(userId) {
       this.$router.push({
@@ -63,6 +59,7 @@ h1 {
 }
 
 main {
+  max-width: 900px;
   width: 90%;
   height: auto;
   margin: auto;
@@ -77,12 +74,12 @@ section {
 }
 
 .profiles {
+  max-width: 300px;
   width: 70%;
   height: fit-content;
   display: flex;
   background: #2c3e50;
   box-sizing: border-box;
-  margin-top: 10px;
   position: absolute;
   z-index: 8;
 }

@@ -17,7 +17,7 @@
     <div class="parts" @focus="focusOn" tabindex="0" role="button" v-if="!onSearch">
       <div class="itens">
         <img src="@/assets/img/search.svg" alt="" />
-        <p>Pesquisar</p>
+        <p>Pesquisar amigos</p>
       </div>
     </div>
   </div>
@@ -64,7 +64,7 @@ export default {
 
 .search {
   height: 30px;
-  padding: 0.3rem;
+  padding: .5rem 0.8rem;
   box-sizing: border-box;
   color: #999;
   outline: none;
@@ -109,6 +109,10 @@ export default {
 }
 
 .parts .itens img {
-  margin-right: 16px;
+  margin-right: 10px;
+}
+
+.parts .itens p {
+  font-size: .7rem;
 }
 </style>
