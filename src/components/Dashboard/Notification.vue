@@ -66,7 +66,7 @@ export default {
     window.Echo
       .private(`request_friend.${this.userMe}`)
       .listen(".RequestFriend", (notification) => this.handleNotification(notification))
-
+    window.Echo.connector.connect();
     window.Echo
       .private(`response_friendship.${this.userMe}`)
       .listen(".ResponseFriendship", (notification) => this.handleNotification(notification));
